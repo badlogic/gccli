@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.2] - 2025-12-12
+
+### Fixed
+
+- Document `acl` command in README
+
 ## [0.1.1] - 2025-12-12
 
 ### Added

@@ -157,9 +157,12 @@ async function handleAccounts(args: string[]) {
 			const credFile = args[1];
 			if (!credFile) error("Usage: accounts credentials <credentials.json>");
 			const creds = JSON.parse(fs.readFileSync(credFile, "utf8"));
+			// Handle Google's download format or gmcli's stored format
 			const installed = creds.installed || creds.web;
-			if (!installed) error("Invalid credentials file");
-			service.setCredentials(installed.client_id, installed.client_secret);
+			const clientId = installed?.client_id || creds.clientId;
+			const clientSecret = installed?.client_secret || creds.clientSecret;
+			if (!clientId || !clientSecret) error("Invalid credentials file");
+			service.setCredentials(clientId, clientSecret);
 			console.log("Credentials saved");
 			break;
 		}

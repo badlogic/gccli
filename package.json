@@ -1,0 +1,41 @@
+{
+	"name": "@mariozechner/gccli",
+	"version": "0.1.0",
+	"description": "Minimal Google Calendar CLI",
+	"type": "module",
+	"bin": {
+		"gccli": "dist/cli.js"
+	},
+	"main": "./dist/calendar-service.js",
+	"types": "./dist/calendar-service.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc && chmod +x dist/cli.js",
+		"check": "biome check src/ --write --diagnostic-level=error && tsgo --noEmit",
+		"prepublishOnly": "npm run build",
+		"prepare": "husky"
+	},
+	"dependencies": {
+		"google-auth-library": "^10.1.0",
+		"googleapis": "^153.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/node": "^22.10.1",
+		"@typescript/native-preview": "^7.0.0-dev.20251204.1",
+		"husky": "^9.1.7",
+		"typescript": "^5.7.2"
+	},
+	"keywords": [
+		"google-calendar",
+		"calendar",
+		"cli"
+	],
+	"author": "",
+	"license": "MIT",
+	"engines": {
+		"node": ">=20.0.0"
+	}
+}

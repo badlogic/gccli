@@ -51,6 +51,7 @@ CALENDAR COMMANDS
         --location <l>       Event location
         --attendees <emails> Attendees (comma-separated)
         --all-day            Create all-day event (use YYYY-MM-DD for start/end)
+        --meet               Add Google Meet video conferencing
 
   gccli <email> update <calendarId> <eventId> [options]
       Update an existing event.
@@ -298,6 +299,7 @@ async function handleCreate(account: string, args: string[]) {
 			end: { type: "string" },
 			attendees: { type: "string" },
 			"all-day": { type: "boolean" },
+			meet: { type: "boolean" },
 		},
 		allowPositionals: true,
 	});
@@ -316,10 +318,17 @@ async function handleCreate(account: string, args: string[]) {
 		end: values.end,
 		attendees: values.attendees?.split(","),
 		allDay: values["all-day"],
+		meet: values.meet,
 	});
 
 	console.log(`Created: ${event.id}`);
 	console.log(`Link: ${event.htmlLink}`);
+	if (event.conferenceData?.entryPoints) {
+		const videoEntry = event.conferenceData.entryPoints.find((e) => e.entryPointType === "video");
+		if (videoEntry?.uri) {
+			console.log(`Meet: ${videoEntry.uri}`);
+		}
+	}
 }
 
 async function handleUpdate(account: string, args: string[]) {
@@ -333,6 +342,7 @@ async function handleUpdate(account: string, args: string[]) {
 			end: { type: "string" },
 			attendees: { type: "string" },
 			"all-day": { type: "boolean" },
+			meet: { type: "boolean" },
 		},
 		allowPositionals: true,
 	});
@@ -349,9 +359,16 @@ async function handleUpdate(account: string, args: string[]) {
 		end: values.end,
 		attendees: values.attendees?.split(","),
 		allDay: values["all-day"],
+		meet: values.meet,
 	});
 
 	console.log(`Updated: ${event.id}`);
+	if (values.meet && event.conferenceData?.entryPoints) {
+		const videoEntry = event.conferenceData.entryPoints.find((e) => e.entryPointType === "video");
+		if (videoEntry?.uri) {
+			console.log(`Meet: ${videoEntry.uri}`);
+		}
+	}
 }
 
 async function handleDelete(account: string, args: string[]) {

@@ -135,6 +135,7 @@ export class CalendarService {
 			end: string;
 			attendees?: string[];
 			allDay?: boolean;
+			meet?: boolean;
 		},
 	): Promise<CalendarEvent> {
 		const calendar = this.getCalendarClient(email);
@@ -148,9 +149,19 @@ export class CalendarService {
 			attendees: event.attendees?.map((e) => ({ email: e })),
 		};
 
+		if (event.meet) {
+			eventBody.conferenceData = {
+				createRequest: {
+					requestId: `gccli-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+					conferenceSolutionKey: { type: "hangoutsMeet" },
+				},
+			};
+		}
+
 		const response = await calendar.events.insert({
 			calendarId,
 			requestBody: eventBody,
+			conferenceDataVersion: event.meet ? 1 : undefined,
 		});
 
 		return response.data;
@@ -168,6 +179,7 @@ export class CalendarService {
 			end?: string;
 			attendees?: string[];
 			allDay?: boolean;
+			meet?: boolean;
 		},
 	): Promise<CalendarEvent> {
 		const calendar = this.getCalendarClient(email);
@@ -191,11 +203,21 @@ export class CalendarService {
 		if (updates.attendees !== undefined) {
 			eventBody.attendees = updates.attendees.map((e) => ({ email: e }));
 		}
+		// Only add Meet if requested
+		if (updates.meet) {
+			eventBody.conferenceData = {
+				createRequest: {
+					requestId: `gccli-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+					conferenceSolutionKey: { type: "hangoutsMeet" },
+				},
+			};
+		}
 
 		const response = await calendar.events.update({
 			calendarId,
 			eventId,
 			requestBody: eventBody,
+			conferenceDataVersion: 1,
 		});
 
 		return response.data;

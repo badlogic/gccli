@@ -51,6 +51,7 @@ CALENDAR COMMANDS
         --location <l>       Event location
         --attendees <emails> Attendees (comma-separated)
         --all-day            Create all-day event (use YYYY-MM-DD for start/end)
+        --recurrence <rule>  Recurrence rule (e.g. "RRULE:FREQ=WEEKLY;BYDAY=TU,TH")
 
   gccli <email> update <calendarId> <eventId> [options]
       Update an existing event.
@@ -71,6 +72,7 @@ EXAMPLES
   gccli you@gmail.com event primary abc123
   gccli you@gmail.com create primary --summary "Meeting" --start 2024-01-15T10:00:00 --end 2024-01-15T11:00:00
   gccli you@gmail.com create primary --summary "Vacation" --start 2024-01-20 --end 2024-01-25 --all-day
+  gccli you@gmail.com create primary --summary "Birthday" --start 2024-06-01 --end 2024-06-02 --all-day --recurrence "RRULE:FREQ=YEARLY"
   gccli you@gmail.com update primary abc123 --summary "Updated Meeting"
   gccli you@gmail.com delete primary abc123
   gccli you@gmail.com freebusy primary,work@group.calendar.google.com --from 2024-01-15T00:00:00Z --to 2024-01-16T00:00:00Z
@@ -298,6 +300,7 @@ async function handleCreate(account: string, args: string[]) {
 			end: { type: "string" },
 			attendees: { type: "string" },
 			"all-day": { type: "boolean" },
+			recurrence: { type: "string" },
 		},
 		allowPositionals: true,
 	});
@@ -316,6 +319,7 @@ async function handleCreate(account: string, args: string[]) {
 		end: values.end,
 		attendees: values.attendees?.split(","),
 		allDay: values["all-day"],
+		recurrence: values.recurrence,
 	});
 
 	console.log(`Created: ${event.id}`);
@@ -333,6 +337,7 @@ async function handleUpdate(account: string, args: string[]) {
 			end: { type: "string" },
 			attendees: { type: "string" },
 			"all-day": { type: "boolean" },
+			recurrence: { type: "string" },
 		},
 		allowPositionals: true,
 	});
@@ -349,6 +354,7 @@ async function handleUpdate(account: string, args: string[]) {
 		end: values.end,
 		attendees: values.attendees?.split(","),
 		allDay: values["all-day"],
+		recurrence: values.recurrence,
 	});
 
 	console.log(`Updated: ${event.id}`);

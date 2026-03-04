@@ -135,6 +135,7 @@ export class CalendarService {
 			end: string;
 			attendees?: string[];
 			allDay?: boolean;
+			recurrence?: string;
 		},
 	): Promise<CalendarEvent> {
 		const calendar = this.getCalendarClient(email);
@@ -146,6 +147,7 @@ export class CalendarService {
 			start: event.allDay ? { date: event.start } : { dateTime: event.start },
 			end: event.allDay ? { date: event.end } : { dateTime: event.end },
 			attendees: event.attendees?.map((e) => ({ email: e })),
+			recurrence: event.recurrence ? [event.recurrence] : undefined,
 		};
 
 		const response = await calendar.events.insert({
@@ -168,6 +170,7 @@ export class CalendarService {
 			end?: string;
 			attendees?: string[];
 			allDay?: boolean;
+			recurrence?: string;
 		},
 	): Promise<CalendarEvent> {
 		const calendar = this.getCalendarClient(email);
@@ -190,6 +193,9 @@ export class CalendarService {
 		}
 		if (updates.attendees !== undefined) {
 			eventBody.attendees = updates.attendees.map((e) => ({ email: e }));
+		}
+		if (updates.recurrence !== undefined) {
+			eventBody.recurrence = [updates.recurrence];
 		}
 
 		const response = await calendar.events.update({
